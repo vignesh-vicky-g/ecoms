@@ -1,76 +1,84 @@
+import { CssBaseline, Link, Switch, ThemeProvider } from '@material-ui/core';
 import { AppBar, Toolbar, Typography } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
 import { Container } from '@mui/system';
 import Head from 'next/head';
 import React, { useContext } from 'react';
 import useStyle from '../utils/styles';
 import NextLink from 'next/link';
-import { CssBaseline, Link, Switch } from '@material-ui/core';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import LoginIcon from '@mui/icons-material/Login';
-import { ThemeProvider } from 'styled-components';
 import { Store } from '../utils/Store';
 import Cookies from 'js-cookie';
+import { createTheme } from '@material-ui/core/styles';
 
-export default function Layouts({ title, discription, children }) {
-  const [state, dispatch] = useContext(Store);
+export default function Layouts({ title, children, description }) {
+  const { state, dispatch } = useContext(Store);
   const darkMode = state;
+  const classes = useStyle();
+  const darkModeChangeHandler = () => {
+    dispatch({ type: darkMode ? 'DARKMODE_ON' : 'DARKMODE_OFF' });
+    const newDarkMode = !darkMode;
+    Cookies.set('darkMode', newDarkMode ? 'ON' : 'OFF');
+  };
 
   const theme = createTheme({
+    typography: {
+      h1: {
+        fontSize: '1.6rem',
+        fontWeight: 400,
+        margin: '1rem 0',
+      },
+      h2: {
+        fontSize: '1.4rem',
+        fontWeight: 400,
+        margin: '1rem 0',
+      },
+      body1: {
+        fontWeight: 'normal',
+      },
+    },
     palette: {
-      type: darkMode ? 'dark' : 'light',
+      type: darkMode ? 'light' : 'dark',
       primary: {
-        main: '#00e676',
+        main: '#f0c000',
+      },
+      secondary: {
+        main: '#208080',
       },
     },
   });
 
-  const classes = useStyle();
-
-  const darkModeChangeHandler = () => {
-    dispatch({ type: darkMode ? 'DARKMODE_OFF' : 'DARKMODE_ON' });
-    const newDarkMode = !darkMode;
-    Cookies.set('darkMode', newDarkMode ? 'NO' : 'OFF');
-  };
   return (
     <div>
       <Head>
-        <title>{title ? `${title} + - Amozon` : 'Amozon'}</title>
-        {discription && <meta name="discription" content={discription}></meta>}
+        <title>{title ? `${title} - Amazon` : 'Amazon'}</title>
+        {description && <meta name="description" content={description}></meta>}
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AppBar position="static" className={classes.navbar}>
-          <Toolbar>
+          <Toolbar className={classes.toolbar}>
             <NextLink href="/" passHref>
               <Link>
-                <Typography className={classes.brand}>Amozon</Typography>
+                <Typography>Amazon</Typography>
               </Link>
             </NextLink>
             <div className={classes.grow}></div>
             <div>
-              <NextLink href="/cart" passHref>
-                <Link>
-                  <ShoppingCartIcon sx={{ mr: 1 }} />
-                  Cart
-                </Link>
-              </NextLink>
-              <NextLink href="/login" passHref>
-                <Link>
-                  <LoginIcon sx={{ mr: 1 }} />
-                  Login
-                </Link>
-              </NextLink>
               <Switch
                 checked={darkMode}
                 onChange={darkModeChangeHandler}
               ></Switch>
+              <NextLink href="/cart" passHref>
+                <Link>Cart</Link>
+              </NextLink>
+              <NextLink href="/login" passHref>
+                <Link>Login</Link>
+              </NextLink>
             </div>
           </Toolbar>
         </AppBar>
         <Container className={classes.main}>{children}</Container>
         <footer className={classes.footer}>
-          <Typography>All rights resolved. Amozon</Typography>
+          <Typography>All Right Resolved.Amazon</Typography>
         </footer>
       </ThemeProvider>
     </div>
